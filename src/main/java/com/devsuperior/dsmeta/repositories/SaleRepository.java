@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.devsuperior.dsmeta.dto.SalesReportDTO;
 import com.devsuperior.dsmeta.entities.Sale;
+import com.devsuperior.dsmeta.projections.ReportProjection;
 
 public interface SaleRepository extends JpaRepository<Sale, Long> {
 	
@@ -16,7 +16,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
 			+ " FROM tb_sales as sl "
 			+ "INNER JOIN tb_seller as se ON tb_sales.seller_id = seller.id "
 			+ "WHERE tb_sales.date BETWEEN :minDate AND :maxDate AND UPPER(sel.name) LIKE :name")
-    List<SalesReportDTO> findSalesByDateRangeAndSeller(@Param("minDate") LocalDate minDate,
+    List<ReportProjection> findSalesByDateRangeAndSeller(@Param("minDate") LocalDate minDate,
                                              @Param("maxDate") LocalDate maxDate,
                                              @Param("name") String name);
 
