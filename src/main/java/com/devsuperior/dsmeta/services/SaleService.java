@@ -5,8 +5,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.devsuperior.dsmeta.dto.SaleMinDTO;
 import com.devsuperior.dsmeta.dto.SalesReportDTO;
+import com.devsuperior.dsmeta.dto.SalesSummaryDTO;
 import com.devsuperior.dsmeta.entities.Sale;
-import com.devsuperior.dsmeta.projections.ReportProjection;
 import com.devsuperior.dsmeta.repositories.SaleRepository;
 
 @Service
@@ -31,27 +29,23 @@ public class SaleService {
 		return new SaleMinDTO(entity);
 	}
 	
-	 public List<SalesReportDTO> getReport(String minDateSTR, String maxDateSTR, String name, Pageable pageable) {
-		 LocalDate minDate = LocalDate.parse(minDateSTR);
-		 LocalDate maxDate = LocalDate.parse(maxDateSTR);
+	 public Page<SalesReportDTO> getReport(String minDateSTR, String maxDateSTR, String name, Pageable pageable) {
+		 LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
+		 LocalDate max = maxDateSTR.equals("") ? today : LocalDate.parse(maxDateSTR);
+		 LocalDate min = minDateSTR.equals("") ? max.minusYears(1L) : LocalDate.parse(minDateSTR);
 	 
-		 if (minDate == null && maxDate == null) {
-		        LocalDate currentDate = LocalDate.now();
-		        minDate = currentDate.minusMonths(12);
-		        maxDate = currentDate;
-		    }else if (minDate == null) {
-		    	minDate = maxDate.minusYears(1L);
-		    }else if (maxDate == null) {
-		    		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
-		    		maxDate = today;
-		    }
-		 List<ReportProjection> list = repository.findSalesByDateRangeAndSeller(minDate, maxDate, name);
-		 List<SalesReportDTO> result = list.stream().map(x -> new SalesReportDTO(x)).collect(Collectors.toList());
-		 
-		 for(SalesReportDTO obj: result) {
-			 System.out.println(obj);
-		 }
-
+		 Page<Sale> result = repository.searchSales(min, max, name, pageable);
+		
+		 return  result.map(x -> new SalesReportDTO(x));
+	 }
+	 
+	 public List<SalesSummaryDTO> getSummary(String minDateSTR, String maxDateSTR) {
+		 LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
+		 LocalDate max = maxDateSTR.equals("") ? today : LocalDate.parse(maxDateSTR);
+		 LocalDate min = minDateSTR.equals("") ? max.minusYears(1L) : LocalDate.parse(minDateSTR);
+	 
+		 List<SalesSummaryDTO> result = repository.searchSummary(min, max);
+		
 		 return  result;
 	 }
 	    

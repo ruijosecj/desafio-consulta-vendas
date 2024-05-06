@@ -2,51 +2,63 @@ package com.devsuperior.dsmeta.dto;
 
 import java.time.LocalDate;
 
-import com.devsuperior.dsmeta.projections.ReportProjection;
+import com.devsuperior.dsmeta.entities.Sale;
 
 public class SalesReportDTO {
+	private Long id;
 	private String sellerName; // Nome do vendedor
     private LocalDate date; // Data da venda
     private double amount; // Valor da venda
     
-
-    // Construtor
-    public SalesReportDTO(String sellerName, LocalDate date, double amount) {
-        this.sellerName = sellerName;
-        this.date = date;
-        this.amount = amount;
+    public SalesReportDTO() {}
         
-    }
+    public SalesReportDTO(Long id, String sellerName, LocalDate date, double amount) {
+		super();
+		this.id = id;
+		this.sellerName = sellerName;
+		this.date = date;
+		this.amount = amount;
+	}
+
     
-    public SalesReportDTO(ReportProjection projection) {
-        this.sellerName = projection.getSellerName();
-        this.date = projection.getDate();
-        this.amount = projection.getAmount();
+    public SalesReportDTO(Sale entity) {
+    	this.id = entity.getId();
+        this.sellerName = entity.getSeller().getName();
+        this.date = entity.getDate();
+        this.amount = entity.getAmount();
         
     }
 
-    // Getters e setters
-    public String getSellerName() {
-        return sellerName;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setSellerName(String sellerName) {
-        this.sellerName = sellerName;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public LocalDate getSDate() {
-        return date;
-    }
+	public String getSellerName() {
+		return sellerName;
+	}
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
+	}
 
-    public double getAmount() {
-        return amount;
-    }
+	public LocalDate getDate() {
+		return date;
+	}
 
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+
+	public double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+
 }
